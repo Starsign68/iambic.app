@@ -1,5 +1,7 @@
 /* eslint-disable import/no-amd, no-undef, no-unused, no-useless-escape */
 // https://docs.webspellchecker.net/display/WebSpellCheckerCloud/Web+API ?? CHECK ??
+monaco.languages.register({id: "HOMEWORK"});
+
 let issues = [];
 
 const xhr = url => {
