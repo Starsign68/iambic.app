@@ -75,25 +75,6 @@ Can you then please start over and describe what you just fixed? `,
  }
 
  editor.addAction({
-  // An unique identifier of the contributed action.
-  id: "re-init",
-  // A label of the action that will be presented to the user.
-  label: "Reload the Editor.",
-  // An optional array of keybindings for the action.
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyR],
-  // An optional precondition for this action.
-  precondition: null,
-  // An optional rule to evaluate on top of the precondition in order to dispatch the keybindings.
-  keybindingContext: null,
-  contextMenuOrder: 0,
-  /** Method that will be executed when the action is triggered.
-   *  - `editor` -- The editor instance is passed in as a convenience
-   */
-  run: function (edi) {
-   globalThis.edi = edi;
-  }
- });
- editor.addAction({
   id: "short-help",
   label: "Show Menu",
   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space, monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP],
