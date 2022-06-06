@@ -8,5 +8,6 @@
   "bracketSpacing": false,
   "jsxBracketSameLine": false,
   "fluid": false,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "quoteProps":"preserve"
 }

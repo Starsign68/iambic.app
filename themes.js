@@ -175,58 +175,11 @@ const themes = {
    {
     foreground: "99c794",
     fontStyle: "normal",
-    token: "entity.other.inherited-class"
-   },
-   {
-    foreground: "99c794",
-    fontStyle: "normal",
     token: "markup.heading"
-   },
-   {
-    foreground: "99c794",
-    fontStyle: "normal",
-    token: "markup.inserted.git_gutter"
-   },
-   {
-    foreground: "99c794",
-    fontStyle: "normal",
-    token: "meta.group.braces.curly constant.other.object.key.js string.unquoted.label.js"
    },
    {
     foreground: "fac863",
     token: "entity.name.class"
-   },
-   {
-    foreground: "fac863",
-    token: "warn"
-   },
-   {
-    foreground: "fac863",
-    token: "entity.name.type.class"
-   },
-   {
-    foreground: "fac863",
-    token: "support.type"
-   },
-   {
-    foreground: "fac863",
-    token: "support.class"
-   },
-   {
-    foreground: "fac863",
-    token: "support.orther.namespace.use.php"
-   },
-   {
-    foreground: "fac863",
-    token: "meta.use.php"
-   },
-   {
-    foreground: "fac863",
-    token: "support.other.namespace.php"
-   },
-   {
-    foreground: "fac863",
-    token: "markup.changed.git_gutter"
    },
    {
     foreground: "ec5f67",
@@ -246,26 +199,6 @@ const themes = {
     token: "variable.language"
    },
    {
-    foreground: "cdd3de",
-    token: "meta.group.braces.curly.js constant.other.object.key.js string.unquoted.label.js"
-   },
-   {
-    foreground: "d8dee9",
-    token: "meta.class-method.js entity.name.function.js"
-   },
-   {
-    foreground: "d8dee9",
-    token: "variable.function.constructor"
-   },
-   {
-    foreground: "d8dee9",
-    token: "meta.class.js meta.class.property.js meta.method.js string.unquoted.js entity.name.function.js"
-   },
-   {
-    foreground: "bb80b3",
-    token: "entity.other.attribute-name"
-   },
-   {
     foreground: "99c794",
     token: "markup.inserted"
    },
@@ -276,14 +209,6 @@ const themes = {
    {
     foreground: "bb80b3",
     token: "markup.changed"
-   },
-   {
-    foreground: "5fb3b3",
-    token: "string.regexp"
-   },
-   {
-    foreground: "5fb3b3",
-    token: "constant.character.escape"
    },
    {
     fontStyle: "underline",
@@ -308,17 +233,12 @@ const themes = {
    {
     foreground: "6699cc",
     fontStyle: "italic",
-    token: "tag.decorator.js entity.name.tag.js"
+    token: "tag.decorator.HW"
    },
    {
     foreground: "6699cc",
     fontStyle: "italic",
     token: "tag.decorator.js punctuation.definition.tag.js"
-   },
-   {
-    foreground: "ec5f67",
-    fontStyle: "italic",
-    token: "source.js constant.other.object.key.js string.unquoted.label.js"
    }
   ],
   colors: {
@@ -332,12 +252,207 @@ const themes = {
    "editorIndentGuide.activeBackground": "#FBC95A"
   }
  },
+ "Oceanic-Next-Simple": {
+  base: "vs-dark",
+  inherit: false,
+  rules: [
+   {
+    background: "1B2B34",
+    foreground: "cdd3de",
+    token: ""
+   },
+   {
+    foreground: "99c794",
+    token: "number"
+   },
+   {
+    foreground: "65737e",
+    fontStyle: "italic",
+    token: "comment"
+   },
+   {
+    fontStyle: "underline",
+    token: "*url*"
+   },
+   {
+    fontStyle: "underline",
+    token: "*link*"
+   },
+   {
+    fontStyle: "underline",
+    token: "*uri*"
+   }
+  ],
+  colors: {
+   "editor.foreground": "#CDD3DE",
+   "editor.background": "#1B2B34",
+   "editor.selectionBackground": "#4f5b66",
+   "editor.lineHighlightBackground": "#65737e55",
+   "editorCursor.foreground": "#c0c5ce",
+   "editorWhitespace.foreground": "#65737e",
+   "editorIndentGuide.background": "#65737F",
+   "editorIndentGuide.activeBackground": "#FBC95A"
+  }
+ },
+ "Pencil": {
+  base: "vs",
+  inherit: true,
+  rules: [
+   {
+    background: "f3f3f3",
+    token: ""
+   },
+   {
+    foreground: "6699cc",
+    fontStyle: "italic",
+    token: "tag.decorator.HW"
+   },
+   {
+    foreground: "949494",
+    token: "comment"
+   },
+   {
+    foreground: "#949494",
+    token: "blur"
+   },
+   {
+    foreground: "f99157",
+    token: "tag.decorator"
+   },
+   {
+    foreground: "f99157",
+    token: "constant.numeric"
+   },
+   {
+    foreground: "0087AF",
+    token: "namespace"
+   },
+   {
+    foreground: "2d3838",
+    token: "punctuation.definition.comment"
+   },
+   {
+    foreground: "d75f00",
+    token: "constant.numeric"
+   },
+   {
+    foreground: "e069e0",
+    token: "keyword"
+   },
+   {
+    foreground: "2d3838",
+    token: "punctuation"
+   },
+   {
+    foreground: "2d3838",
+    token: "delimiter"
+   },
+   {
+    foreground: "4d4d4c",
+    token: "number"
+   },
+   {
+    foreground: "008700",
+    token: "markup.inserted"
+   },
+   {
+    foreground: "2fadad",
+    token: "tag.decorator"
+   },
+   {
+    foreground: "D70000",
+    token: "markup.deleted"
+   },
+
+   {
+    foreground: "d7005f",
+    token: "markup.changed"
+   },
+   {
+    foreground: "d75f00",
+    token: "entity.name.class"
+   }
+   //  blur: 949494
+   //  numb: d75f00
+   /* 
+const backgroundColor = '#EEEEEE';
+const foregroundColor = '#444444';
+const cursorColor = 'rgba(31, 188, 210, 0.8)';
+const borderColor = 'rgba(0, 0, 0, 0.15)';
+
+const colors = {
+  black: '#444444',
+  red: '#D70000',
+  green: '#008700',
+  yellow: '#F8A738',
+  blue: '#0087AF',
+  magenta: '#8700AF',
+  cyan: '#00AF5F',
+  white: '#EEEEEE',
+  lightBlack: '#546386',
+  lightRed: '#E17E85',
+  lightGreen: '#61BA86',
+  lightYellow: '#FFB68E',
+  lightBlue: '#4CB2FF',
+  lightMagenta: '#BE86E3',
+  lightCyan: '#2DCED0',
+  lightWhite: '#444444',
+  lightGray: 'rgba(0, 0, 0, 0.075)',
+};
+ */
+  ],
+  colors: {
+   "editor.background": "#f3f3f3",
+   "editorCursor.foreground": "#4d4d4c",
+   "editor.foreground": "#4d4d4c",
+   "editorWhitespace.foreground": "#f3f3f3",
+   "editor.lineHighlightBackground": "#d0d0d0",
+   "editor.selectionBackground": "#B6E9ED",
+   "editorIndentGuide.background": "#AAAAAA",
+   "editorIndentGuide.activeBackground": "#f99157"
+  }
+ },
+
+ "Pencil-Simple": {
+  base: "vs",
+  inherit: false,
+  rules: [
+   {
+    background: "f3f3f3",
+    foreground: "2d3838",
+    token: ""
+   },
+   {
+    foreground: "008700",
+    token: "number"
+   }
+  ],
+  colors: {
+   "editor.background": "#f3f3f3",
+   "editorCursor.foreground": "#008700",
+   "editor.foreground": "#4d4d4c",
+   "editorWhitespace.foreground": "#f3f3f3",
+   "editor.lineHighlightBackground": "#d0d0d0",
+   "editor.selectionBackground": "#B6E9ED",
+   "editorIndentGuide.background": "#d0d0d0",
+   "editorIndentGuide.activeBackground": "#f99157"
+  }
+ },
 
  HWTheme: {
   base: "vs-dark",
 
   inherit: true,
-  colors: {"editor.background": "#1b1d1f", "editor.foreground": "#c2c5bd"},
+  colors: {
+   "editor.foreground": "#CDD3DE",
+   "editor.background": "#1B2B34",
+   "editor.selectionBackground": "#4f5b66",
+   "editor.lineHighlightBackground": "#65737e55",
+   "editorCursor.foreground": "#c0c5ce",
+   "editorWhitespace.foreground": "#65737e",
+   "editorIndentGuide.background": "#65737F",
+   "editorIndentGuide.activeBackground": "#FBC95A"
+  },
   rules: [
    {token: "comment", foreground: "aaaaaa", fontStyle: "italic"},
    {token: "keyword", foreground: "94763a", fontStyle: "bold"},
@@ -366,5 +481,3 @@ const themes = {
   ]
  }
 };
-
-monaco.languages.setMonarchTokensProvider("HOMEWORK", tokenz);

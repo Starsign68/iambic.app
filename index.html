@@ -1,15 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
  <head>
+  <link rel="manifest" href="manifest.webmanifest" />
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>ReFaulkner</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js" async></script>
-  <script src="init.js" async></script>
-  <script src="homework.js" async></script>
-  <script src="themes.js"></script>
+  <title>Iambic.app</title>
+  <link rel="shortcut icon" href="favicon.png" type="image/png" />
+  <script src="str.js" async></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
+  <!-- <script src="init.js" async></script> -->
+  <script>
+   /* eslint-disable import/no-amd, no-undef, no-unused-expressions, no-useless-escape */
+   console.time("INIT");
+   const load = () => {
+    require.config({
+     paths: {
+      vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/"
+     }
+    });
+    globalThis.MonacoEnvironment = {
+     getWorkerUrl: function (workerId, label) {
+      return `data:text/javascript;charset=utf-8 , ${encodeURIComponent(`
+    self.MonacoEnvironment = { baseUrl: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/" };
+    importScripts("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/base/worker/workerMain.min.js");`)}`;
+     }
+    };
+    // globalThis.monaco = require(["vs/editor/editor.main"], function () {});
+    globalThis.xhr = url => {
+     var req = null;
+     return new Promise(
+      function (c, e) {
+       req = new XMLHttpRequest();
+       req.onreadystatechange = function () {
+        if (req._canceled) {
+         return;
+        }
+        if (req.readyState === 4) {
+         if ((req.status >= 200 && req.status < 300) || req.status === 1223) {
+          c(req);
+         } else {
+          e(req);
+         }
+         req.onreadystatechange = function () {};
+        }
+       };
+       req.open("GET", url, true);
+       req.responseType = "string";
+       req.send(null);
+      },
+      function () {
+       req._canceled = true;
+       req.abort();
+      }
+     );
+    };
+   };
+   console.clear();
+   load();
+
+   console.timeEnd("INIT");
+  </script>
+  <script src="homework.js"></script>
   <script src="main.js" async></script>
+  <script src="themes.js"></script>
   <style>
    /* Flex column layout, with the editor taking up all available screen space */
    html,

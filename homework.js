@@ -1,11 +1,81 @@
-/* eslint-disable import/no-amd, no-undef, no-unused, no-useless-escape */
-// https://docs.webspellchecker.net/display/WebSpellCheckerCloud/Web+API ?? CHECK ??
+/* eslint-disable import/no-amd, no-unused-*, no-useless-escape */
+/* global xhr, globalThis:writable,monaco */
+/**
+ * @typedef range
+ * @type {object}
+ * @property {number} startLineNumber - an ID.
+ * @property {number} endLineNumber - your name.
+ */
 
-let issues = [];
-const langf = "HW";
-monaco.languages.register({id: langf});
+console.time("HW");
+console.time("TEST");
+try {
+ if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js");
+  console.log(navigator.serviceWorker);
+ } else {
+ }
+} catch (e) {
+ alert(e);
+ console.error("Error", e);
+ throw e;
+}
+console.timeEnd("TEST");
 
-const config = (LanguageConfiguration = {
+function logz(inp, ov) {
+ if (ov || globalThis.dev === true) {
+  console.log.call(globalThis, inp);
+ }
+}
+
+class sgt {
+ /** A Suggestion
+  *
+  * @param {range} range
+  *
+  * @param {string} label what the label should display
+  * @param {string} kind the type of symbol to show
+  * @param {string} [insert]
+  * @param {string} [doc]
+  * @param {string} [sort]
+  * @param {boolean} [snippet]
+  */
+ constructor(range, label, kind = "", insert = "", doc = `Insert ${insert} into text.`, sort = label, snippet = null) {
+  return {
+   sortText: "__" + sort + "__",
+   label: label,
+   kind: kind,
+   documentation: doc,
+   insertTextRules: `${snippet ? 4 : 0}`,
+   insertText: insert,
+   range: range
+  };
+ }
+}
+
+class Demo {
+ /** @type sgt[] */
+ #res = [];
+ #regex = /\d+/;
+ /**
+  * **A demo class**
+  * @param {*} obj
+  * @param {*} range
+  */
+ constructor(obj, range) {
+  Object.entries(obj).forEach(([key, val]) => {
+   if (!this.#regex.test(key)) {
+    this.#res.push(new sgt(range, key, val, "", `Demo for type of ${key}.`));
+   }
+  });
+  return this.#res;
+ }
+}
+
+globalThis.done = [];
+globalThis.issues = [];
+/* eslint-disable-next-line */
+globalThis.config = LanguageConfiguration = {
  comments: {
   lineComment: ":",
   blockComment: ["|::", "::|"]
@@ -31,9 +101,9 @@ const config = (LanguageConfiguration = {
   {open: '"', close: '"'},
   {open: "'", close: "'"}
  ]
-});
+};
 
-const tokenz = {
+globalThis.tokenThings = {
  defaultToken: "invalid",
 
  tokenPostfix: ".HW",
@@ -43,7 +113,6 @@ const tokenz = {
  t3: ["this", "it", "one", "you", "that", "I"],
  t4: ["get", "following", "then", "find", "describe", "explain", "show", "try"],
  enums: ["for", "of"],
-
  pos: ["true", "good", "best", "great", "awesome"],
  neg: ["not", "bad", "no", "worst", "none", "but", "false"],
  cnd: ["is", "if", "isn't"],
@@ -55,7 +124,7 @@ const tokenz = {
  ],
 
  // we include these common regular expressions
- symbols: /[=\>\<!~?:&+\-*\/\^%]+/,
+ symbols: /[=\>\<!~?:&+\-*\'\"\`\/\^%]+/,
 
  // The main tokenizer for our languages
  tokenizer: {
@@ -69,7 +138,7 @@ const tokenz = {
     {
      cases: {
       "@t1": "type",
-      "@t2": "tag.decorator.js",
+      "@t2": "tag.decorator",
       "@t3": "keyword",
       "@t4": "constant.numeric",
       "@ops": "namespace",
@@ -97,96 +166,207 @@ const tokenz = {
    [/[;,.]/, "delimiter"]
   ],
   comment: [
-   [/[^\:\|]+/, "comment"],
-   // [/\/\*/,    'comment', '@push' ],    // nested comment
-   [":|", "comment", "@pop"],
+   [/[^\:\|]+/m, "comment"],
+   //  [/\\:\*/,    'comment', '@push' ],    // nested comment
+   ["::|", "comment", "@pop"],
    [/:/, "comment"]
   ],
   whitespace: [
-   [/[ \t\r\n]+/, "white"],
-   [/\|\:\:/, "comment", "@comment"],
-   [/\:.*$/, "comment"]
+   [/[\s\t\r\n]+/, "white"],
+   [/\|\:/, "comment", "@comment"],
+   [/\:?\:[ |].*$/, "comment"]
   ]
  }
 };
-globalThis.provides = {
- registerCodeAction: monaco.languages.registerCodeActionProvider(langf, {
-  provideCodeActions: (model /**ITextModel*/, range /**Range*/, context /**CodeActionContext*/, token /**CancellationToken*/) => {
-   const actions = context.markers.map(error => {
-    return (
+/* eslint-disable no-template-curly-in-string */
+
+function createSuggestionsProposals(range, types = [], monaco) {
+ const x = {
+  "demo": new Demo(monaco.languages.CompletionItemKind, range),
+  "cites": [
+   new sgt(
+    range,
+    "CHI",
+    21,
+    '${1:Author}. "${2:Source Title}." ${3:Container Title}, ${4:Contributors}, ${5:Version}, ${6:Number}, ${7:Publisher}, ${8:Publish Date}, ${9:Location}.',
+    "Insert A CHIC citation",
+    "__CITES__",
+    true
+   ),
+   {
+    sortText: "__CITES__",
+    label: "MLA",
+    kind: monaco.languages.CompletionItemKind.Reference,
+    documentation: "Insert An MLA citation",
+    insertText: '${1:Author}. "${2:Source Title}." ${3:Container Title}, ${4:Contributors}, ${5:Version}, ${6:Number}, ${7:Publisher}, ${8:Publish Date}, ${9:Location}.',
+    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    range: range
+   },
+   {
+    sortText: "__CITES__",
+    label: "APA",
+    kind: monaco.languages.CompletionItemKind.Reference,
+    documentation: "Insert An APA citation",
+    insertText: '${1:Author}. "${2:Source Title}." ${3:Container Title}, ${4:Contributors}, ${5:Version}, ${6:Number}, ${7:Publisher}, ${8:Publish Date}, ${9:Location}.',
+    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    range: range
+   }
+  ]
+ };
+ let res = [];
+ types.forEach(function (item) {
+  let a = x[item] ?? [];
+  res.unshift(a);
+ });
+ return res.flat(Infinity);
+}
+
+function createCodeActionProposals(model /**ITextModel*/, range /**Range*/, context /**CodeActionContext*/, token /**CancellationToken*/, monaco) {
+ globalThis.rest = 1;
+ /**
+  * @type codeAct[]
+  */
+ let actions = [];
+ globalThis.issues = context.markers;
+ /* eslint-disable-next-line */
+ context.markers.map(error => {
+  actions.push({
+   title: `Fix ${error.code} [${error.relatedInformation.message}]`,
+   diagnostics: error,
+   kind: "quickfix",
+   edit: {
+    edits: [
      {
-      title: `Fix ${error.message.match(/(?<=\()[a-z]+?(?=\))/)}`,
-      diagnostics: [error],
-      kind: "quickfix",
+      resource: model.uri,
       edit: {
-       edits: [
-        {
-         resource: model.uri,
-         edit: {
-          range: error,
-          text: error.relatedInformation.message
-         }
-        }
-       ]
-      },
-      isPreferred: true
-     },
-     model
-    );
-   });
-   return {
-    actions: actions,
-    dispose: () => {}
-   };
+       range: error,
+       text: error.relatedInformation.message
+      }
+     }
+    ]
+   },
+   isPreferred: true
+  });
+ });
+ if (false) {
+  actions.push({
+   title: `Make Plural`,
+   kind: "refactor",
+   edit: {
+    edits: [
+     {
+      resource: model.uri,
+      edit: {
+       range: range,
+       text: globalThis.fmt.plur(model.getValueInRange(range))
+      }
+     }
+    ]
+   },
+   isPreferred: false
+  });
+  actions.push({
+   title: `Make singular`,
+   kind: "refactor",
+   edit: {
+    edits: [
+     {
+      resource: model.uri,
+      edit: {
+       range: range,
+       text: globalThis.fmt.sing(model.getValueInRange(range))
+      }
+     }
+    ]
+   },
+   isPreferred: false
+  });
+ }
+ let fixes = {
+  actions: actions,
+  dispose: a => {
+   let s = a;
+   logz(["Updated Issue: ", s]);
   }
- }),
+ };
+ return fixes;
+}
 
- // Register a tokens provider for the language
- registerHover: monaco.languages.registerHoverProvider(langf, {
-  provideHover: function (model, position) {
-   let word = model.getWordAtPosition(position).word;
-   if (globalThis.showHover === true && /^[a-z]*$/i.test(word)) {
-    return xhr("https://api.dictionaryapi.dev/api/v2/entries/en/" + word).then(function (response) {
-     let result = {
-      contents: [
-       {
-        value: "```" + word.substring(0, 1).toUpperCase() + word.substring(1) + "```"
-       }
-      ]
-     };
-     let data = JSON.parse(response.responseText)[0].meanings;
-     data.forEach(obj => {
-      result.contents.push({
-       value: "**" + obj.partOfSpeech.substring(0, 1).toUpperCase() + obj.partOfSpeech.substring(1) + ":**"
-      }),
-       obj.definitions.forEach(txt => result.contents.push({value: "_" + txt.definition + "_"}));
-     });
-     return result;
-    });
-   }
-  }
- }),
+/* eslint-enable no-template-curly-in-string */
 
- registerCompletionItem: monaco.languages.registerCompletionItemProvider(langf, {
-  provideCompletionItems: function (model, position) {
-   let keywords = ["because", "this shows", "in one instance,"];
-   const suggestions = [
-    ...keywords.map(text => {
+/** @typedef codeAct
+ * @type {{title: string, diagnostics: [marker], kind: string, edit: { edits: [ { resource: string, edit: { range: marker, text: string } } ] }, isPreferred: boolean } }
+ *
+ *
+ */
+globalThis.pr = {
+ init: function () {
+  return require(["vs/editor/editor.main"], function () {
+   monaco.languages.setMonarchTokensProvider(globalThis.langDef, globalThis.tokenThings);
+   globalThis.xpr = {
+    init: function () {
      return {
-      label: text,
-      kind: monaco.languages.CompletionItemKind.Text,
-      insertText: text.toLowerCase()
-     };
-    })
-   ];
-   if (showSuggests) {
-    return {suggestions: suggestions};
-   } else {
-    return {suggestions: {}};
-   }
-  }
- })
-};
+      registerCodeAction: monaco.languages.registerCodeActionProvider(globalThis.langDef, {
+       provideCodeActions: function (model /**ITextModel*/, range /**Range*/, context /**CodeActionContext*/, token /**CancellationToken*/) {
+        return createCodeActionProposals(model, range, context, token, monaco);
+       },
+       resolveCodeAction: function (codeAct, token) {
+        logz([codeAct]);
+        let model = monaco.editor.getModel(codeAct.diagnostics.relatedInformation.resource);
+        logz(["Issues:", globalThis.issues], true);
+        monaco.editor.setModelMarkers(model, "EN-US ", globalThis.issues);
+       }
+      }),
 
-monaco.languages.setLanguageConfiguration(langf, config);
-monaco.languages.setMonarchTokensProvider(langf, tokenz);
+      // Register a tokens provider for the language
+      registerHover: monaco.languages.registerHoverProvider(globalThis.langDef, {
+       provideHover: function (model, position) {
+        let word = model.getWordAtPosition(position).word;
+        if (globalThis.showHover === true && /^[a-z]*$/i.test(word)) {
+         return xhr("https://api.dictionaryapi.dev/api/v2/entries/en/" + word).then(function (response) {
+          let result = {
+           contents: [
+            {
+             value: "```" + word.substring(0, 1).toUpperCase() + word.substring(1) + "```"
+            }
+           ]
+          };
+          let data = JSON.parse(response.responseText)[0].meanings;
+          data.forEach(obj => {
+           /* eslint-disable-next-line */
+           result.contents.push({
+            value: "**" + obj.partOfSpeech.substring(0, 1).toUpperCase() + obj.partOfSpeech.substring(1) + ":**"
+           });
+           obj.definitions.forEach(txt => result.contents.push({value: "_" + txt.definition + "_"}));
+          });
+          return result;
+         });
+        }
+       }
+      }),
+      registerCompletionItem: monaco.languages.registerCompletionItemProvider(globalThis.langDef, {
+       provideCompletionItems: function (model, position) {
+        let word = model.getWordUntilPosition(position);
+        let range = {
+         startLineNumber: position.lineNumber,
+         endLineNumber: position.lineNumber,
+         startColumn: word.startColumn,
+         endColumn: word.endColumn
+        };
+
+        if (globalThis.showSuggests) {
+         return {suggestions: createSuggestionsProposals(range, ["cites", "demo"], monaco)};
+        } else {
+         return;
+        }
+       }
+      })
+     };
+    }
+   };
+   globalThis.xpr.init();
+   monaco.languages.setLanguageConfiguration(globalThis.langDef, globalThis.config);
+  });
+ }
+};
+console.timeEnd("HW");

@@ -1,6 +1,15 @@
 /* eslint-disable import/no-amd, no-unused-expressions, no-useless-escape */
-/* globals fH:writable, fHandle:writable, monaco, themes, showSuggests:writable, lint */
+/* globals xhr fH:writable, fHandle:writable, monaco, themes */
+console.time("MAIN");
 const globalThis = window.globalThis;
+globalThis.issues = [];
+
+globalThis.dev = false;
+function logz(inp) {
+ if (globalThis.dev === true) {
+  console.log(inp);
+ }
+}
 
 async function openFile() {
  [fH] = await window.showOpenFilePicker();
@@ -25,146 +34,222 @@ async function saveFile() {
 globalThis.showHover = false;
 globalThis.showSuggests = false;
 globalThis.txtValue = "";
+globalThis.langDef = "HW";
+require(["vs/editor/editor.main"], function () {
+ monaco.languages.register({id: globalThis.langDef});
+ let Theme = "Oceanic-Next-Simple";
 
-let Lang = "HW";
-let Theme = "Oceanic-Next";
-let txt = `This is a good start ... But is it really the best?
+ //  let Theme = "Pencil-simp";
+ globalThis.theme = Theme;
+ let txt = `This is a good start ... But is it really the best?
 This is a good test case. I will repeat all of the best examples to show that this is good, and not bad.
 You are starting to get it! Now, just try to find some of the errors in the data and then fix the not good math.
 Then, once you are done, add, then subtract most of the test results.
 Can you then please start over and describe what you just fixed? `;
-// Define new themes that contain rules that match this language
-for (const [key, value] of Object.entries(themes)) {
- monaco.editor.defineTheme(key, value);
-}
-const editorElement = document.getElementById("editor");
-const editor = monaco.editor.create(editorElement, {
- model: monaco.editor.createModel("", Lang, monaco.Uri.parse("inmemory://1")),
- language: Lang,
- loading: "Loading . . . ",
- autoIndent: true,
- cursorBlinking: "phase",
- cursorSmoothCaretAnimation: true,
- cursorStyle: "line-thin",
- theme: Theme,
- fontSize: 15,
- lineHeight: 1.5,
- minimap: {enabled: false, renderCharacters: false},
- multiCursorModifier: "ctrlCmd",
- overviewRulerBorder: false,
- overviewRulerLanes: 0,
- smoothScrolling: false,
- cursorSurroundingLines: 2
-});
-// Resize the editor when the window size changes
-window.addEventListener("resize", () =>
- editor.layout({
-  width: editorElement.offsetWidth,
-  height: editorElement.offsetHeight
- })
-);
-globalThis.actions = {
- short_help: editor.addAction({
-  id: "short-help",
-  label: "Show menu",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space, monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP],
-  contextMenuOrder: 0,
-  run: function (edi) {
-   edi._actions["editor.action.quickCommand"]._run();
-  }
- }),
- show_hover: editor.addAction({
-  id: "show-hover",
-  label: "Toggle hover definitions",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyH],
-  contextMenuOrder: -0.2,
-  contextMenuGroupId: "1_navigation",
-  run: function (edi) {
-   globalThis.showHover = !globalThis.showHover;
-  }
- }),
- show_suggests: editor.addAction({
-  id: "show-suggests",
-  label: "Toggle suggestions",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF],
-  contextMenuOrder: -0.2,
-  contextMenuGroupId: "1_navigation",
-  run: function (edi) {
-   globalThis.showSuggests = !globalThis.showSuggests;
-  }
- }),
- re_suggests: editor.addAction({
-  id: "re-suggests",
-  label: "Toggle Tags",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF],
-  contextMenuOrder: -0.2,
-  contextMenuGroupId: "1_navigation",
-  run: function (edi) {
-   globalThis.showSuggests = !globalThis.showSuggests;
-  }
- }),
- save_edits: editor.addAction({
-  id: "save-edits",
-  label: "Save to cached file",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
-  contextMenuOrder: 0,
-  run: function (edi) {
-   globalThis.txtValue = edi.getValue();
-   saveFile();
-   document.getElementById("saved").innerText = "Saved";
-  }
- }),
- save_edits_as: editor.addAction({
-  id: "save-edits-as",
-  label: "Save to new file",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyS],
-  contextMenuOrder: 0,
-  run: function (edi) {
-   globalThis.txtValue = edi.getValue();
-   saveFile();
-  }
- }),
- engl_lint: editor.addAction({
-  id: "engl-lint",
-  label: "Check spelling and style",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyI],
-  contextMenuOrder: -0.2,
-  contextMenuGroupId: "2_lint",
-  run: function (edi) {
-   let model = edi.getModel();
-   const API_KEY = "";
-   return xhr(`https://svc.webspellchecker.net/api?cmd=check&lang=en_US&format=json&customerid=${API_KEY}&text=${model.getValue().replaceAll("\n", " ")}`).then(function (
-    response
-   ) {
+ let txt2 = `this is not jjust a great app ... It is an awesome app!!!`;
+ // Define new themes that contain rules that match this language
+ console.time("THEME");
+ for (const [key, value] of Object.entries(themes)) {
+  monaco.editor.defineTheme(key, value);
+ }
+ console.timeEnd("THEME");
+ const editorElement = document.getElementById("editor");
+ let editor = monaco.editor.create(editorElement, {
+  language: "HW",
+  loading: "Loading . . . ",
+  cursorBlinking: "phase",
+  scrollbar: {
+   horizontal: "hidden",
+   vertical: "hidden"
+  },
+  cursorSmoothCaretAnimation: true,
+  cursorStyle: "line-thin",
+  theme: Theme,
+  fontSize: 15,
+  lineHeight: 1.5,
+  minimap: {enabled: false, renderCharacters: false},
+  multiCursorModifier: "ctrlCmd",
+  overviewRulerBorder: false,
+  overviewRulerLanes: 0,
+  smoothScrolling: true,
+  cursorSurroundingLines: 12,
+  suggest: {preview: false, previewMode: "subword-smart"}
+ });
+ // Resize the editor when the window size changes
+ const model = monaco.editor.createModel(txt, globalThis.langDef, monaco.Uri.parse("inmemory://1"));
+ editor.setModel(model);
+ window.addEventListener("resize", () =>
+  editor.layout({
+   width: editorElement.offsetWidth,
+   height: editorElement.offsetHeight
+  })
+ );
+ let actionsW = {
+  short_help: editor.addAction({
+   id: "short-help",
+   label: "Show menu",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space, monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP],
+   contextMenuOrder: 0,
+   run: function (edi) {
+    edi._actions["editor.action.quickCommand"]._run();
+   }
+  }),
+  re_init: editor.addAction({
+   id: "re-Init",
+   label: "Reload",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space],
+   contextMenuOrder: 0,
+   run: function (edi) {
+    globalThis.pr.init();
+
+    monaco.editor.setModelLanguage(model, "HW");
+   }
+  }),
+  show_hover: editor.addAction({
+   id: "show-hover",
+   label: "Toggle hover definitions",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyH],
+   contextMenuOrder: -0.2,
+   contextMenuGroupId: "1_navigation",
+   run: function (edi) {
+    globalThis.showHover = !globalThis.showHover;
+   }
+  }),
+  show_suggests: editor.addAction({
+   id: "show-suggests",
+   label: "Toggle suggestions",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF],
+   contextMenuOrder: -0.2,
+   contextMenuGroupId: "1_navigation",
+   run: function (edi) {
+    globalThis.showSuggests = !globalThis.showSuggests;
+   }
+  }),
+  re_suggests: editor.addAction({
+   id: "inspect-tokens",
+   label: "Inspect Tokens",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyM],
+   contextMenuOrder: -0.2,
+   contextMenuGroupId: "1_navigation",
+   run: function (edi) {
+    edi._actions["editor.action.inspectTokens"]._run();
+   }
+  }),
+  setTheme: editor.addAction({
+   id: "theme-toggle",
+   label: "Toggle Theme",
+   keybindings: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyE)],
+   contextMenuOrder: -0.2,
+   contextMenuGroupId: "1_navigation",
+   run: function (edi) {
+    let themeMap = {"Pencil": "Oceanic-Next", "Oceanic-Next": "Pencil", "Pencil-Simple": "Oceanic-Next-Simple", "Oceanic-Next-Simple": "Pencil-Simple"};
+    let t = globalThis.theme;
+    globalThis.theme = themeMap[t];
+    monaco.editor.setTheme(globalThis.theme);
+   }
+  }),
+  setSimple: editor.addAction({
+   id: "simple-theme-toggle",
+   label: "Toggle Simple Theme",
+   keybindings: [monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS)],
+   contextMenuOrder: -0.2,
+   contextMenuGroupId: "1_navigation",
+   run: function (edi) {
+    let themeMap = {"Pencil": "Pencil-Simple", "Oceanic-Next": "Oceanic-Next-Simple", "Pencil-Simple": "Pencil", "Oceanic-Next-Simple": "Oceanic-Next"};
+    let t = globalThis.theme;
+    globalThis.theme = themeMap[t];
+    monaco.editor.setTheme(globalThis.theme);
+   }
+  }),
+  save_edits: editor.addAction({
+   id: "save-edits",
+   label: "Save to cached file",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
+   contextMenuOrder: 0,
+   run: function (edi) {
+    globalThis.txtValue = edi.getValue();
+    // saveFile();
+    // document.getElementById("saved").innerText = "Saved";
+   }
+  }),
+
+  save_edits_as: editor.addAction({
+   id: "save-edits-as",
+   label: "Save to new file",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyS],
+   contextMenuOrder: 0,
+   run: function (edi) {
+    globalThis.txtValue = edi.getValue();
+    // saveFile();
+   }
+  }),
+  save_T: editor.addAction({
+   id: "remove-marks-now",
+   label: "Clear the Spelling errors",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyI],
+   contextMenuOrder: 0.2,
+   contextMenuGroupId: "2_lint",
+   run: function (edi) {
+    globalThis.issues = [];
+    let model = edi.getModel();
+    logz("Issues:", globalThis.issues);
+    monaco.editor.setModelMarkers(model, "EN-US ", globalThis.issues);
+   }
+  }),
+  engl_lint: editor.addAction({
+   id: "engl-lint",
+   label: "Check spelling and style",
+   keybindings: [[monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyI], [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyO]],
+   contextMenuOrder: -0.2,
+   contextMenuGroupId: "2_lint",
+   run: async function (edi) {
+    let model = edi.getModel();
+    /* Speed run getting API key revoked: */
+    let API_KEY = "1iKQaZAKfHX9MQz"; /* Free trial API key, just for POC ... don't take ... Can't be bothered to fix ... */
+    console.time("LINT");
+    const response = await xhr(`https://svc.webspellchecker.net/api?cmd=check&lang=en_US&format=json&customerid=${API_KEY}&text=${model.getValue().replaceAll(/[\n\:]/g, " ")}`);
+    console.timeEnd("LINT");
     let errors = JSON.parse(response.responseText);
-    let issues = [];
     let errs = errors.result[0].matches;
+    let mark = [];
     errs.forEach(function (err) {
      let ereStart = model.getPositionAt(err.offset + 0);
      let ereEnd = model.getPositionAt(err.offset + 0 + err.length);
-     issues.push({
-      startLineNumber: ereStart.lineNumber,
-      endLineNumber: ereEnd.lineNumber,
-      startColumn: ereStart.column,
-      endColumn: ereEnd.column,
-      message: `${err.message} (${err.type.toLowerCase()}) 
-        Fix: [${err.suggestions[0]}]`,
-      severity: 2,
-      source: "EN-US",
-      relatedInformation: {message: err.suggestions[0] + ""}
+     err.suggestions.forEach(function (i) {
+      mark.push({
+       startLineNumber: ereStart.lineNumber,
+       endLineNumber: ereEnd.lineNumber,
+       startColumn: ereStart.column,
+       endColumn: ereEnd.column,
+       code: `${err.type}`,
+       message: `${err.message} (${err.type}) 
+ Fix: [${i}]`,
+       severity: err.type === "spelling" ? 0 : 2,
+       source: "EN-US ",
+       relatedInformation: {message: i, resource: model.uri}
+      });
      });
     });
-    edi.setModelMarkers(model, "EN-US", issues);
-   });
-  }
- }),
- open_edits_from: editor.addAction({
-  id: "open-edits-from",
-  label: "Open a file",
-  keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyO],
-  contextMenuOrder: 0,
-  run: function (edi) {
-   openFile().then(() => edi.setValue(globalThis.txtValue));
-  }
- })
-};
+    const intersection = (a, b) => a.filter(x => b.includes(x));
+    let c = intersection(globalThis.issues, mark);
+    globalThis.issues = mark;
+    monaco.editor.setModelMarkers(model, "EN-US ", globalThis.issues);
+   }
+  }),
+
+  open_edits_from: editor.addAction({
+   id: "open-edits-from",
+   label: "Open a file",
+   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyO],
+   contextMenuOrder: 0,
+   run: function (edi) {
+    openFile().then(() => edi.setValue(globalThis.txtValue));
+   }
+  })
+ };
+ monaco.languages.setMonarchTokensProvider(globalThis.langDef, globalThis.tokenThings);
+ monaco.languages.setLanguageConfiguration(globalThis.langDef, globalThis.config);
+ globalThis.pr.init();
+});
+
+console.timeEnd("MAIN");
