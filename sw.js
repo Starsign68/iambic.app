@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-globals, array-callback-return*/
 
 var CURRENT_CACHES = {
- data: "data-cache-v2"
+ data: "data-cache-v4"
 };
 
 self.addEventListener("install", function (event) {
