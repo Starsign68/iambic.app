@@ -1,3 +1,4 @@
+
 /* eslint-env serviceWorker */
 /* eslint-disable no-restricted-globals, array-callback-return*/
 
