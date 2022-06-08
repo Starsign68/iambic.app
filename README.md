@@ -1,6 +1,6 @@
 # iambic.app
 
-## UPDATE: The Service worker broke, just try `Ctrl` + `Shift` + `R` if it gives an error.
+<!-- ## UPDATE: The Service worker broke, just try `Ctrl` + `Shift` + `R` if it gives an error. -->
 
 Iambic.app: A WIP PWA text editor for prose.
 
